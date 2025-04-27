@@ -362,53 +362,74 @@ class PatientDoc(APIView):
             
         }
         return Response(context, status=status.HTTP_200_OK)
+    
+from rest_framework.permissions import IsAuthenticated
+
 class getPatientDocStatus(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, id):
-        pat = patientDocument.objects.filter(id=id).first().patient
-        if not pat:
-            return Response({"error": "Patient does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        # Here the user is guaranteed authenticated
         try:
             patd = patientDocument.objects.get(id=id)
         except patientDocument.DoesNotExist:
             return Response({"error": "Patient document does not exist."}, status=status.HTTP_404_NOT_FOUND)
-        if PatinetDocumentAcess.objects.filter(doc=patd,to=request.user,sanctioned=True).exists():
+
+        pat = patd.patient
+        if not pat:
+            return Response({"error": "Patient does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        if PatinetDocumentAcess.objects.filter(doc=patd, to=request.user, sanctioned=True).exists():
             return Response(status=status.HTTP_200_OK)
-        if accident.objects.filter(user=pat).exists(): 
+        
+        if accident.objects.filter(user=pat).exists():
             return Response(status=status.HTTP_200_OK)
-        if patd.isPrivate == False:
+
+        if not patd.isPrivate:
             return Response(status=status.HTTP_200_OK)
-        try:
-            tok = request.COOKIES.get('authToken')
-        except KeyError:
-            return Response({"error": "Authentication token not found"}, status=status.HTTP_403_FORBIDDEN)
-        try:
-            token = Token.objects.get(key=tok)
-        except Token.DoesNotExist:
-            return Response({"error": "Invalid authentication token"}, status=status.HTTP_403_FORBIDDEN)
-        if token.user!= patd.patient.user:
+
+        if request.user != patd.patient.user:
             return Response({"error": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
+
         return Response(status=status.HTTP_200_OK)
+
     
+from rest_framework.permissions import IsAuthenticated
+
 class getHospitalDocStatus(APIView):
-    def get(self,request, id):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
         try:
             patd = hospitalDocument.objects.get(id=id)
         except hospitalDocument.DoesNotExist:
             return Response({"error": "Hospital document does not exist."}, status=status.HTTP_404_NOT_FOUND)
-        pat = hospitalDocument.objects.filter(id=id).first().hospitalLedger.patient
+
+        pat = patd.hospitalLedger.patient
         if not pat:
             return Response({"error": "Patient does not exist."}, status=status.HTTP_404_NOT_FOUND)
-        if accident.objects.filter(user=pat).exists(): 
+
+        # Check if user has sanctioned access
+        if HospitalDocumentAcess.objects.filter(doc=patd, to=request.user, sanctioned=True).exists():
             return Response(status=status.HTTP_200_OK)
-        if HospitalDocumentAcess.objects.filter(doc=patd,to=request.user,sanctioned=True).exists():
+
+        # Check if accident record exists
+        if accident.objects.filter(user=pat).exists():
             return Response(status=status.HTTP_200_OK)
-        if patd.isPrivate == False:
+
+        # Check if document is not private
+        if not patd.isPrivate:
             return Response(status=status.HTTP_200_OK)
+
+        # Check if the user is either the hospital user or the patient user
         if patd.hospitalLedger.hospital.user == request.user:
             return Response(status=status.HTTP_200_OK)
+        
         if patd.hospitalLedger.patient.user == request.user:
             return Response(status=status.HTTP_200_OK)
+
         return Response({"error": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
+
 class checkPatient(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
