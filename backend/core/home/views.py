@@ -33,9 +33,10 @@ from django.core.mail import send_mail
 # address = "0x153E45453fE2a1b86EA124F02b2437602ed46581"  
 # checksum_address = Web3.to_checksum_address(address) 
 
+
 # print(checksum_address)  
 
-with open(r'/home/sathwik/new/ArogyaKhosh/backend/core/home/abi.json', "r") as abi_file:
+with open(r'C:\Projects\Arogyakosh\Arogya_Khosh\backend\core\home\abi.json', "r") as abi_file:
     contract_abi = json.load(abi_file)
 
 # LOCAL_NODE_URL =  
@@ -409,20 +410,14 @@ class getHospitalDocStatus(APIView):
             return Response(status=status.HTTP_200_OK)
         return Response({"error": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
 class checkPatient(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, id):
-        try:
-            tok = request.COOKIES.get('authToken')
-        except KeyError:
-            return Response({"error": "Authentication token not found"}, status=status.HTTP_403_FORBIDDEN)
-        try:
-            token = Token.objects.get(key=tok)
-        except Token.DoesNotExist:
-            return Response({"error": "Invalid authentication token"}, status=status.HTTP_403_FORBIDDEN)
         try:
             patd = patient.objects.get(id=id)
         except patient.DoesNotExist:
             return Response({"error": "Patient does not exist."}, status=status.HTTP_404_NOT_FOUND)
-        if token.user!= patd.user:
+        if request.user!= patd.user:
             return Response({"error": "Unauthorized access"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(status=status.HTTP_200_OK)
 class checkHospital(APIView):
