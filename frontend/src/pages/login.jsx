@@ -1,7 +1,5 @@
-
-
 import { useState, useEffect } from 'react';
-import '../ui/login.css';
+import '../ui/login.css'; // Update to the new CSS file
 
 // More explicit environment variable handling with fallback
 const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8000';
@@ -462,227 +460,284 @@ function Login() {
 
   return (
     <>
-      <div className="backgroundimg">
-        <img src="https://i.ibb.co/5ffp7qF/wave.png" alt="wave" />
+      {/* Animated Background */}
+      <div className="particle-background">
+        <div className="particles"></div>
+        <div className="health-wave"></div>
       </div>
       
       <div className="container">
-        <div className="img">
-          <img src="https://i.ibb.co/wZCxpzRg/bg.png" alt="bg" />
-        </div>
         <div className="login-content">
-          <div>
-            <img src="https://i.ibb.co/27BtpVrK/avatar.png" alt="avatar" />
-            
-            <h2 className="title">Welcome</h2>
-            
-            <div className="tabs">
-              <button 
-                className={`tab-btn ${currentUserType === 'hospital' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('hospital')}
-              >
-                Hospital
-              </button>
-              <button 
-                className={`tab-btn ${currentUserType === 'doctor' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('doctor')}
-              >
-                Doctor
-              </button>
-              <button 
-                className={`tab-btn ${currentUserType === 'patient' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('patient')}
-              >
-                Patient
-              </button>
-            </div>
-            
-            {/* Hospital Login Form */}
-            <form 
-              className={`form-container ${currentUserType === 'hospital' ? 'active' : ''}`}
-              onSubmit={(e) => handleLogin('hospital', e)}
+          {/* Heartbeat Animation */}
+          <div className="heartbeat-icon">
+            <i className="fas fa-heartbeat"></i>
+          </div>
+          
+          {/* ECG Animation */}
+          <div className="health-pulse">
+  <svg viewBox="0 0 600 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="pulse-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="var(--gradient-green)" />
+        <stop offset="100%" stopColor="var(--gradient-blue)" />
+      </linearGradient>
+    </defs>
+    <path 
+      d="M0,50 Q150,50 200,50 T300,50 L310,30 L320,70 L330,50 L340,50 L350,50 L370,20 L390,80 L410,50 Q450,50 600,50" 
+      fill="none" 
+      className="ecg-line" 
+    />
+  </svg>
+</div>
+          
+          <h2 className="title">Welcome to ArogyaKosh</h2>
+          
+          {/* User Type Tabs */}
+          <div className="tabs">
+            <button 
+              className={`tab-btn ${currentUserType === 'hospital' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('hospital')}
             >
-              <div className={`input-div one ${inputFocus['hospital-username'] || formData.hospital.username ? 'focus' : ''}`}>
+              Hospital
+            </button>
+            <button 
+              className={`tab-btn ${currentUserType === 'doctor' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('doctor')}
+            >
+              Doctor
+            </button>
+            <button 
+              className={`tab-btn ${currentUserType === 'patient' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('patient')}
+            >
+              Patient
+            </button>
+          </div>
+          
+          {/* Hospital Login Form */}
+          <div className={`form-container ${currentUserType === 'hospital' ? 'active' : ''}`}>
+            {error.hospital && <div className="error-message">{error.hospital}</div>}
+            
+            <form onSubmit={(e) => handleLogin('hospital', e)}>
+              {/* Username Input */}
+              <div className={`input-div one ${inputFocus['hospital-username'] ? 'focus' : ''}`}>
                 <div className="i">
-                  <i className="fas fa-hospital"></i>
+                  <i className="fas fa-user"></i>
                 </div>
-                <div className="div">
+                <div>
                   <h5>Hospital ID</h5>
                   <input 
                     type="text" 
+                    id="hospital-username" 
                     className="input" 
-                    id="hospital-username"
                     value={formData.hospital.username}
                     onChange={(e) => handleInputChange('hospital', 'username', e.target.value)}
                   />
                 </div>
               </div>
-              <div className={`input-div pass ${inputFocus['hospital-password'] || formData.hospital.password ? 'focus' : ''}`}>
+              
+              {/* Password Input */}
+              <div className={`input-div two ${inputFocus['hospital-password'] ? 'focus' : ''}`}>
                 <div className="i">
                   <i className="fas fa-lock"></i>
                 </div>
-                <div className="div">
+                <div>
                   <h5>Password</h5>
                   <input 
                     type="password" 
+                    id="hospital-password" 
                     className="input" 
-                    id="hospital-password"
                     value={formData.hospital.password}
                     onChange={(e) => handleInputChange('hospital', 'password', e.target.value)}
                   />
                 </div>
               </div>
+              
+              {/* MetaMask Button */}
               <button 
                 type="button" 
                 className="metamask-btn" 
                 onClick={() => connectMetaMask('hospital')}
-                disabled={metamaskConnecting.hospital}
+                disabled={metamaskConnecting.hospital || web3Account}
               >
-                <div className="metamask-icon">🦊</div>
-                {web3Account ? 'Connected' : metamaskConnecting.hospital ? 'Connecting...' : 'Connect MetaMask'}
+                <i className="fab fa-ethereum metamask-icon"></i>
+                {web3Account ? 'MetaMask Connected' : metamaskConnecting.hospital ? 'Connecting...' : 'Connect MetaMask'}
               </button>
-              {web3Account && <div className="confirmation" style={{display: 'block'}}></div>}
-              {web3Account && <div className="metamask-address" style={{display: 'block'}}>Wallet Address: {web3Account}</div>}
-              {error.hospital && <div className="error-message" style={{display: 'block'}}>{error.hospital}</div>}
+              
+              {/* Display Connected Address */}
+              {web3Account && (
+                <div className="metamask-address">
+                  Connected: {`${web3Account.substring(0, 6)}...${web3Account.substring(web3Account.length - 4)}`}
+                </div>
+              )}
+              
+              {/* Login Button */}
               <button 
                 type="submit" 
                 className="btn" 
-                disabled={loading.hospital}
+                disabled={loading.hospital || !formData.hospital.username || !formData.hospital.password}
               >
-                {loading.hospital ? 'Loading...' : 'Login'}
+                {loading.hospital ? 'Logging in...' : 'Login'}
               </button>
             </form>
+          </div>
+          
+          {/* Doctor Login Form */}
+          <div className={`form-container ${currentUserType === 'doctor' ? 'active' : ''}`}>
+            {error.doctor && <div className="error-message">{error.doctor}</div>}
             
-            {/* Doctor Login Form */}
-            <form 
-              className={`form-container ${currentUserType === 'doctor' ? 'active' : ''}`}
-              onSubmit={(e) => handleLogin('doctor', e)}
-            >
-              <div className={`input-div one ${inputFocus['doctor-username'] || formData.doctor.username ? 'focus' : ''}`}>
+            <form onSubmit={(e) => handleLogin('doctor', e)}>
+              {/* Username Input */}
+              <div className={`input-div one ${inputFocus['doctor-username'] ? 'focus' : ''}`}>
                 <div className="i">
                   <i className="fas fa-user-md"></i>
                 </div>
-                <div className="div">
+                <div>
                   <h5>Doctor ID</h5>
                   <input 
                     type="text" 
+                    id="doctor-username" 
                     className="input" 
-                    id="doctor-username"
                     value={formData.doctor.username}
                     onChange={(e) => handleInputChange('doctor', 'username', e.target.value)}
                   />
                 </div>
               </div>
-              <div className={`input-div pass ${inputFocus['doctor-password'] || formData.doctor.password ? 'focus' : ''}`}>
+              
+              {/* Password Input */}
+              <div className={`input-div two ${inputFocus['doctor-password'] ? 'focus' : ''}`}>
                 <div className="i">
                   <i className="fas fa-lock"></i>
                 </div>
-                <div className="div">
+                <div>
                   <h5>Password</h5>
                   <input 
                     type="password" 
+                    id="doctor-password" 
                     className="input" 
-                    id="doctor-password"
                     value={formData.doctor.password}
                     onChange={(e) => handleInputChange('doctor', 'password', e.target.value)}
                   />
                 </div>
               </div>
+              
+              {/* MetaMask Button */}
               <button 
                 type="button" 
                 className="metamask-btn" 
                 onClick={() => connectMetaMask('doctor')}
-                disabled={metamaskConnecting.doctor}
+                disabled={metamaskConnecting.doctor || web3Account}
               >
-                <div className="metamask-icon">🦊</div>
-                {web3Account ? 'Connected' : metamaskConnecting.doctor ? 'Connecting...' : 'Connect MetaMask'}
+                <i className="fab fa-ethereum metamask-icon"></i>
+                {web3Account ? 'MetaMask Connected' : metamaskConnecting.doctor ? 'Connecting...' : 'Connect MetaMask'}
               </button>
-              {web3Account && <div className="confirmation" style={{display: 'block'}}></div>}
-              {web3Account && <div className="metamask-address" style={{display: 'block'}}>Wallet Address: {web3Account}</div>}
-              {error.doctor && <div className="error-message" style={{display: 'block'}}>{error.doctor}</div>}
+              
+              {/* Display Connected Address */}
+              {web3Account && (
+                <div className="metamask-address">
+                  Connected: {`${web3Account.substring(0, 6)}...${web3Account.substring(web3Account.length - 4)}`}
+                </div>
+              )}
+              
+              {/* Login Button */}
               <button 
                 type="submit" 
                 className="btn" 
-                disabled={loading.doctor}
+                disabled={loading.doctor || !formData.doctor.username || !formData.doctor.password}
               >
-                {loading.doctor ? 'Loading...' : 'Login'}
+                {loading.doctor ? 'Logging in...' : 'Login'}
               </button>
             </form>
+          </div>
+          
+          {/* Patient Login Form */}
+          <div className={`form-container ${currentUserType === 'patient' ? 'active' : ''}`}>
+            {error.patient && <div className="error-message">{error.patient}</div>}
+            {success.patient && <div className="success-message">{success.patient}</div>}
             
-            {/* Patient Login Form */}
-            <form 
-              className={`form-container ${currentUserType === 'patient' ? 'active' : ''}`}
-              onSubmit={(e) => handleLogin('patient', e)}
-            >
-              <div className={`input-div one ${inputFocus['patient-username'] || formData.patient.username ? 'focus' : ''}`}>
-                <div className="i">
-                  <i className="fas fa-user"></i>
-                </div>
-                <div className="div">
-                  <h5>Patient ID</h5>
-                  <input 
-                    type="text" 
-                    className="input" 
-                    id="patient-username"
-                    value={formData.patient.username}
-                    onChange={(e) => handleInputChange('patient', 'username', e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className={`input-div pass ${inputFocus['patient-password'] || formData.patient.password ? 'focus' : ''}`}>
-                <div className="i">
-                  <i className="fas fa-lock"></i>
-                </div>
-                <div className="div">
-                  <h5>Password</h5>
-                  <input 
-                    type="password" 
-                    className="input" 
-                    id="patient-password"
-                    value={formData.patient.password}
-                    onChange={(e) => handleInputChange('patient', 'password', e.target.value)}
-                  />
-                </div>
-              </div>
-              {error.patient && <div className="error-message" style={{display: 'block'}}>{error.patient}</div>}
-              {success.patient && <div className="success-message" style={{display: 'block'}}>{success.patient}</div>}
-              
-              {/* 2FA Verification Section */}
-              {awaiting2FA && (
-                <div className="verification-container" style={{display: 'block'}}>
-                  <div className={`input-div one ${inputFocus['verification-code'] || formData.patient.verificationCode ? 'focus' : ''}`}>
+            <form onSubmit={(e) => awaiting2FA ? verifyPatient2FA(e) : handleLogin('patient', e)}>
+              {!awaiting2FA ? (
+                <>
+                  {/* Username Input */}
+                  <div className={`input-div one ${inputFocus['patient-username'] ? 'focus' : ''}`}>
+                    <div className="i">
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div>
+                      <h5>Patient ID</h5>
+                      <input 
+                        type="text" 
+                        id="patient-username" 
+                        className="input" 
+                        value={formData.patient.username}
+                        onChange={(e) => handleInputChange('patient', 'username', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Password Input */}
+                  <div className={`input-div two ${inputFocus['patient-password'] ? 'focus' : ''}`}>
+                    <div className="i">
+                      <i className="fas fa-lock"></i>
+                    </div>
+                    <div>
+                      <h5>Password</h5>
+                      <input 
+                        type="password" 
+                        id="patient-password" 
+                        className="input" 
+                        value={formData.patient.password}
+                        onChange={(e) => handleInputChange('patient', 'password', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="verification-container">
+                  <div className={`input-div one ${inputFocus['verification-code'] ? 'focus' : ''}`}>
                     <div className="i">
                       <i className="fas fa-key"></i>
                     </div>
-                    <div className="div">
-                      <h5>Verification Code</h5>
+                    <div>
+                      <h5> </h5>
                       <input 
                         type="text" 
+                        id="verification-code" 
                         className="input" 
-                        id="verification-code"
                         value={formData.patient.verificationCode}
                         onChange={(e) => handleInputChange('patient', 'verificationCode', e.target.value)}
                       />
                     </div>
                   </div>
-                  <button 
-                    type="button" 
-                    className="btn" 
-                    onClick={verifyPatient2FA}
-                    disabled={loading.patient}
-                  >
-                    Verify
-                  </button>
                 </div>
               )}
               
+              {/* Login/Verify Button */}
               <button 
                 type="submit" 
                 className="btn" 
-                disabled={loading.patient}
+                disabled={
+                  loading.patient || 
+                  (awaiting2FA ? !formData.patient.verificationCode : !formData.patient.username || !formData.patient.password)
+                }
               >
-                {loading.patient ? 'Loading...' : awaiting2FA ? 'Submit Code' : 'Login'}
+                {loading.patient 
+                  ? (awaiting2FA ? 'Verifying...' : 'Logging in...') 
+                  : (awaiting2FA ? 'Verify Code' : 'Login')
+                }
               </button>
+              
+              {/* Reset 2FA Flow Button */}
+              {awaiting2FA && (
+                <button 
+                  type="button" 
+                  className="btn" 
+                  style={{ background: 'transparent', color: 'var(--text-secondary)', boxShadow: 'none' }}
+                  onClick={resetPatient2FA}
+                >
+                  Back to Login
+                </button>
+              )}
             </form>
           </div>
         </div>

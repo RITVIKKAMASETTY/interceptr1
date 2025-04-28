@@ -1,112 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import '../ui/hspDashboard.css';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, 
   faHospital, 
   faUserPlus, 
   faUsers, 
-  faRightFromBracket, 
+  faRightFromBracket,
   faVolumeUp, 
-  faPause, 
-  faSearch, 
-  faSpinner, 
-  faPhoneAlt, 
-  faEnvelope, 
-  faMapMarkerAlt
+  faPause,
+  faSpinner,
+  faUserInjured,
+  faUserMd,
+  faProcedures,
+  faCalendarCheck,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
-import { 
-  faFacebookF, 
-  faTwitter, 
-  faGoogle, 
-  faInstagram, 
-  faLinkedinIn, 
-  faGithub 
-} from '@fortawesome/free-brands-svg-icons';
+import '../ui/hspDashboard.css';
 
 const HospitalDashboard = () => {
-  const [sidebarActive, setSidebarActive] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
-  const [hospitalInfo, setHospitalInfo] = useState({
-    name: '-',
-    license: '-',
-    location: '-',
-    contact: '-'
-  });
+  const [hospital, setHospital] = useState({});
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [authStatus, setAuthStatus] = useState('unknown');
+  const [showModal, setShowModal] = useState(false);
+  const [sidebarActive, setSidebarActive] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [authStatus, setAuthStatus] = useState({
+    isAuthorized: false,
+    isLoggedIn: false
+  });
   
-  const toggleSidebar = () => {
-    setSidebarActive(!sidebarActive);
-  };
-
-  const startSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      const contentToRead = document.querySelector('.main-content').textContent;
-      const speech = new SpeechSynthesisUtterance();
-      speech.text = contentToRead;
-      speech.volume = 1;
-      speech.rate = 1;
-      speech.pitch = 1;
-      speech.lang = 'en-US';
-      
-      window.speechSynthesis.speak(speech);
-      setSpeaking(true);
-      
-      speech.onend = function() {
-        setSpeaking(false);
-      };
-    }
-  };
-
-  const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setSpeaking(false);
-    }
-  };
-
-  const toggleSpeaking = () => {
-    if (speaking) {
-      stopSpeaking();
-    } else {
-      startSpeaking();
-    }
-  };
-
+  // New doctor form state
+  const [newDoctor, setNewDoctor] = useState({
+    name: '',
+    specialty: '',
+    license: '',
+    contact: ''
+  });
+  
+  const hospitalId = window.location.pathname.split('/').pop();
+  const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8000';
+  
   useEffect(() => {
-    const hospitalId = window.location.pathname.split('/').pop();
-    const authToken = getCookie('authToken');
-
-    // Check hospital auth status
-    const checkHospitalAuth = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/check-hospital/${hospitalId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        // Get auth token from cookies
+        const authToken = getCookie('authToken');
         
-        if (response.status === 200) {
-          setAuthStatus('authorized');
-        } else if (response.status === 403) {
-          setAuthStatus('not_logged_in');
-        } else if (response.status === 401) {
-          setAuthStatus('unauthorized');
-        }
-      } catch (error) {
-        console.error('Error checking hospital authorization:', error);
-      }
-    };
-
-    // Load hospital information
-    const fetchHospitalInfo = async () => {
-      try {
-        const response = await fetch(`/hospital-dashboard/${hospitalId}`, {
+        // Load hospital information
+        const response = await fetch(`${BASE_URL}/hospital-dashboard/${hospitalId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -119,15 +62,10 @@ const HospitalDashboard = () => {
         }
         
         const data = await response.json();
-        setHospitalInfo({
-          name: data.hospital?.name || 'N/A',
-          license: data.hospital?.license || 'N/A',
-          location: data.hospital?.location || 'N/A',
-          contact: data.hospital?.contact || 'N/A'
-        });
+        setHospital(data.hospital || {});
         
         // Load doctors data
-        const doctorsResponse = await fetch(`/doctors/${hospitalId}`, {
+        const doctorsResponse = await fetch(`${BASE_URL}/doctors/${hospitalId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -140,37 +78,174 @@ const HospitalDashboard = () => {
         }
         
         const doctorsData = await doctorsResponse.json();
-        setDoctors(doctorsData.doctors);
-        setLoading(false);
+        setDoctors(doctorsData.doctors || []);
+        
+        // Check hospital auth status
+        checkHospitalAuth(authToken);
+        
       } catch (error) {
-        console.error('Error fetching hospital information:', error);
+        console.error('Error fetching data:', error);
         setError(true);
+      } finally {
         setLoading(false);
       }
     };
-
-    checkHospitalAuth();
-    fetchHospitalInfo();
-  }, []);
-
-  // Utility function to get cookies
+    
+    fetchData();
+    
+    // Initialize Google Translate
+    initGoogleTranslate();
+    
+    // Clean up speech synthesis on unmount
+    return () => {
+      if (speaking) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [hospitalId]);
+  
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
   };
-
+  
+  const checkHospitalAuth = async (authToken) => {
+    try {
+      const response = await fetch(`${BASE_URL}/check-hospital/${hospitalId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.status === 200) {
+        setAuthStatus({ isAuthorized: true, isLoggedIn: true });
+      } else if (response.status === 403) {
+        setAuthStatus({ isAuthorized: false, isLoggedIn: false });
+      } else if (response.status === 401) {
+        setAuthStatus({ isAuthorized: false, isLoggedIn: true });
+      }
+    } catch (error) {
+      console.error('Error checking authorization:', error);
+    }
+  };
+  
+  const toggleSidebar = () => {
+    setSidebarActive(!sidebarActive);
+  };
+  
   const openAddDoctorModal = () => {
-    // This would be implemented with a modal state
-    console.log("Open add doctor modal");
+    setShowModal(true);
+  };
+  
+  const closeAddDoctorModal = () => {
+    setShowModal(false);
+  };
+  
+  const handleDoctorInputChange = (e) => {
+    const { id, value } = e.target;
+    setNewDoctor({ ...newDoctor, [id.replace('doctor', '').toLowerCase()]: value });
+  };
+  
+  const addDoctor = async () => {
+    try {
+      const authToken = getCookie('authToken');
+      const response = await fetch(`${BASE_URL}/doctors/${hospitalId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newDoctor)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to add doctor');
+      }
+      
+      // Refresh doctors list
+      const doctorsResponse = await fetch(`${BASE_URL}/doctors/${hospitalId}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const doctorsData = await doctorsResponse.json();
+      setDoctors(doctorsData.doctors || []);
+      
+      // Close modal and reset form
+      setNewDoctor({
+        name: '',
+        specialty: '',
+        license: '',
+        contact: ''
+      });
+      closeAddDoctorModal();
+    } catch (error) {
+      console.error('Error adding doctor:', error);
+      // Handle error (show message, etc.)
+    }
+  };
+  
+  const initGoogleTranslate = () => {
+    // Add Google Translate script
+    const script = document.createElement('script');
+    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    // Define initialization function
+    window.googleTranslateElementInit = function() {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi,kn,te,mr',
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+        },
+        'google_translate_element'
+      );
+    };
+  };
+  
+  const toggleReadAloud = () => {
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    } else {
+      startSpeaking();
+    }
+  };
+  
+  const startSpeaking = () => {
+    const contentToRead = document.querySelector('.main-content').textContent;
+    
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = contentToRead;
+    speech.volume = 1;
+    speech.rate = 1;
+    speech.pitch = 1;
+    
+    // Use the language selected in Google Translate if possible
+    const currentLang = document.querySelector('.goog-te-combo')?.value || 'en-US';
+    speech.lang = currentLang;
+    
+    window.speechSynthesis.speak(speech);
+    setSpeaking(true);
+    
+    speech.onend = function() {
+      setSpeaking(false);
+    };
   };
 
   return (
     <div className="dashboard-container">
-      {/* Background Image */}
+      {/* Background image */}
       <div className="bg-image">
-        <img src="/api/placeholder/1200/800" alt="background" className="bg-img" />
+        <img src="/api/placeholder/1200/800" alt="background" />
       </div>
       
       {/* Hamburger Menu Button */}
@@ -181,11 +256,7 @@ const HospitalDashboard = () => {
       </div>
       
       {/* Overlay for mobile */}
-      <div 
-        className="overlay" 
-        style={{ display: sidebarActive ? 'block' : 'none' }}
-        onClick={toggleSidebar}
-      ></div>
+      <div className={`overlay ${sidebarActive ? 'active' : ''}`} onClick={toggleSidebar}></div>
       
       {/* Sidebar Navigation */}
       <div className={`sidebar ${sidebarActive ? 'active' : ''}`}>
@@ -193,12 +264,7 @@ const HospitalDashboard = () => {
           <div className="logo-icon">+</div>
           <div className="logo-text">AROGYAKOSH</div>
         </div>
-        
-        <div className="menu-item">
-          <FontAwesomeIcon icon={faHome} />
-          <span>Hospital Dashboard</span>
-        </div>
-        
+      
         <div className="menu-item active">
           <FontAwesomeIcon icon={faHospital} />
           <span>Hospital</span>
@@ -207,21 +273,27 @@ const HospitalDashboard = () => {
         <div className="menu-item">
           <FontAwesomeIcon icon={faUserPlus} />
           <span>
-            <a href="/route/add-patient/" style={{ textDecoration: 'none', color: 'inherit' }}>Add Patients</a>
+            <Link to="/route/add-patient/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Add Patients
+            </Link>
           </span>
         </div>
         
         <div className="menu-item">
           <FontAwesomeIcon icon={faUsers} />
           <span>
-            <a href="/route/hospital-patients/" style={{ textDecoration: 'none', color: 'inherit' }}>View All Patients</a>
+            <Link to="/route/hospital-patients/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              View All Patients
+            </Link>
           </span>
         </div>
         
         <div className="menu-item">
           <FontAwesomeIcon icon={faRightFromBracket} />
           <span>
-            <a href="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Logout</a>
+            <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Logout
+            </Link>
           </span>
         </div>
         
@@ -230,9 +302,8 @@ const HospitalDashboard = () => {
         </div>
         
         <div className="menu-item">
-          <button id="readAloudBtn" className="read-aloud-btn" onClick={toggleSpeaking}>
-            <FontAwesomeIcon icon={speaking ? faPause : faVolumeUp} />
-            {speaking ? ' Pause Reading' : ' Read Aloud'}
+          <button id="readAloudBtn" onClick={toggleReadAloud} title="Read page content aloud">
+            <FontAwesomeIcon icon={speaking ? faPause : faVolumeUp} /> {speaking ? 'Pause Reading' : 'Read Aloud'}
           </button>
         </div>
       </div>
@@ -241,9 +312,9 @@ const HospitalDashboard = () => {
       <div className="main-content">
         <div className="header">
           <h1 className="page-title">Hospital Dashboard</h1>
-          {authStatus === 'not_logged_in' && (
+          {!authStatus.isLoggedIn && (
             <div id="header-auth">
-              <a href="/login" className="btn btn-primary">Login</a>
+              <Link to="/login" className="btn btn-primary">Login</Link>
             </div>
           )}
         </div>
@@ -260,15 +331,15 @@ const HospitalDashboard = () => {
           </div>
         )}
         
-        {authStatus === 'authorized' && (
+        {authStatus.isAuthorized && !loading && (
           <div className="auth-section">
             <div className="auth-buttons">
-              <a href="/route/add-patient/" className="btn btn-primary">
+              <Link to="/route/add-patient/" className="btn btn-primary">
                 <FontAwesomeIcon icon={faUserPlus} /> Add Patient
-              </a>
-              <a href="/route/hospital-patients/" className="btn btn-success">
+              </Link>
+              <Link to="/route/hospital-patients/" className="btn btn-success">
                 <FontAwesomeIcon icon={faUsers} /> See All Patients
-              </a>
+              </Link>
             </div>
           </div>
         )}
@@ -279,19 +350,19 @@ const HospitalDashboard = () => {
             <div className="info-grid">
               <div className="info-item">
                 <div className="info-label">Name</div>
-                <div className="info-value">{hospitalInfo.name}</div>
+                <div className="info-value">{hospital.name || 'N/A'}</div>
               </div>
               <div className="info-item">
                 <div className="info-label">License</div>
-                <div className="info-value">{hospitalInfo.license}</div>
+                <div className="info-value">{hospital.license || 'N/A'}</div>
               </div>
               <div className="info-item">
                 <div className="info-label">Location</div>
-                <div className="info-value">{hospitalInfo.location}</div>
+                <div className="info-value">{hospital.location || 'N/A'}</div>
               </div>
               <div className="info-item">
                 <div className="info-label">Contact</div>
-                <div className="info-value">{hospitalInfo.contact}</div>
+                <div className="info-value">{hospital.contact || 'N/A'}</div>
               </div>
             </div>
           </div>
@@ -302,7 +373,7 @@ const HospitalDashboard = () => {
             <h2 className="card-title">Doctors</h2>
             <div className="search-upload-container">
               <div className="search-container">
-                <input type="text" className="search-input" placeholder="Search doctors..." />
+                <input type="text" className="search-input" placeholder="Search doctors..." id="doctor-search" />
                 <FontAwesomeIcon icon={faSearch} className="search-icon" />
               </div>
               <button className="upload-btn" onClick={openAddDoctorModal}>
@@ -310,19 +381,17 @@ const HospitalDashboard = () => {
               </button>
             </div>
             <div className="doctors-container">
-              {doctors.length > 0 ? (
-                doctors.map((doctor, index) => (
-                  <div key={index} className="doctor-card">
-                    <strong>Name:</strong> {doctor.name} <br />
-                    <strong>Age:</strong> {doctor.age} <br />
-                    <strong>License:</strong> {doctor.license} <br />
-                    <strong>Contact:</strong> {doctor.contact} <br />
-                    <a href={`/route/doctor-dashboard/${doctor.id}`} className="doctor-link">View Doctor</a>
-                  </div>
-                ))
-              ) : (
-                <div className="empty-message">No doctors found.</div>
-              )}
+              {doctors.map((doc, index) => (
+                <div className="doctor-card" key={index}>
+                  <strong>Name:</strong> {doc.name} <br />
+                  <strong>Age:</strong> {doc.age} <br />
+                  <strong>License:</strong> {doc.license} <br />
+                  <strong>Contact:</strong> {doc.contact} <br />
+                  <Link to={`/route/doctor-dashboard/${doc.id}`} className="doctor-link">
+                    View Doctor
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -332,23 +401,31 @@ const HospitalDashboard = () => {
             <h2 className="card-title">Hospital Statistics</h2>
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-icon"><FontAwesomeIcon icon={faUserPlus} /></div>
-                <div className="stat-value">-</div>
+                <div className="stat-icon">
+                  <FontAwesomeIcon icon={faUserInjured} />
+                </div>
+                <div className="stat-value">{hospital.totalPatients || '-'}</div>
                 <div className="stat-label">Total Patients</div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon"><FontAwesomeIcon icon={faHospital} /></div>
-                <div className="stat-value">-</div>
+                <div className="stat-icon">
+                  <FontAwesomeIcon icon={faUserMd} />
+                </div>
+                <div className="stat-value">{doctors.length || '-'}</div>
                 <div className="stat-label">Doctors</div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon"><FontAwesomeIcon icon={faHospital} /></div>
-                <div className="stat-value">-</div>
+                <div className="stat-icon">
+                  <FontAwesomeIcon icon={faProcedures} />
+                </div>
+                <div className="stat-value">{hospital.availableBeds || '-'}</div>
                 <div className="stat-label">Available Beds</div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon"><FontAwesomeIcon icon={faHospital} /></div>
-                <div className="stat-value">-</div>
+                <div className="stat-icon">
+                  <FontAwesomeIcon icon={faCalendarCheck} />
+                </div>
+                <div className="stat-value">{hospital.appointmentsToday || '-'}</div>
                 <div className="stat-label">Today's Appointments</div>
               </div>
             </div>
@@ -356,70 +433,77 @@ const HospitalDashboard = () => {
         )}
       </div>
       
-      {/* Add Doctor Modal would be implemented as a component */}
-      
-      {/* Footer */}
-      <footer>
-        <div className="footer-container">
-          {/* Footer Navigation */}
-          <nav className="footer-nav">
-            <a href="#about">About Us</a>
-            <a href="#services">Services</a>
-            <a href="#awards">Awards</a>
-            <a href="#help">Help</a>
-            <a href="#contact">Contact</a>
-          </nav>
-          
-          {/* Mission Statement */}
-          <div className="mission-statement">
-            <p>
-              AROGYAKOSH provides comprehensive medical care with compassion and expertise.
-              Our mission is to deliver high-quality healthcare tailored to individual patient needs.
-              We believe in accessible healthcare for all and strive to innovate in providing medical services.
-            </p>
-          </div>
-          
-          {/* Social Media Icons */}
-          <div className="social-icons">
-            <a href="#" aria-label="Facebook">
-              <FontAwesomeIcon icon={faFacebookF} />
-            </a>
-            <a href="#" aria-label="Twitter">
-              <FontAwesomeIcon icon={faTwitter} />
-            </a>
-            <a href="#" aria-label="Google">
-              <FontAwesomeIcon icon={faGoogle} />
-            </a>
-            <a href="#" aria-label="Instagram">
-              <FontAwesomeIcon icon={faInstagram} />
-            </a>
-            <a href="#" aria-label="LinkedIn">
-              <FontAwesomeIcon icon={faLinkedinIn} />
-            </a>
-            <a href="#" aria-label="GitHub">
-              <FontAwesomeIcon icon={faGithub} />
-            </a>
-          </div>
-          
-          {/* Contact Information */}
-          <div className="contact-info">
-            <div>
-              <FontAwesomeIcon icon={faPhoneAlt} /> +1 (555) 123-4567
+      {/* Add Doctor Modal */}
+      {showModal && (
+        <div className="upload-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <div className="modal-title">Add New Doctor</div>
+              <span className="close-btn" onClick={closeAddDoctorModal}>&times;</span>
             </div>
-            <div>
-              <FontAwesomeIcon icon={faEnvelope} /> info@arogyakosh.com
+            <div className="upload-form">
+              <div className="form-group">
+                <label htmlFor="doctorName" className="form-label">Doctor Name</label>
+                <input 
+                  type="text" 
+                  id="doctorName" 
+                  className="form-control" 
+                  placeholder="Enter doctor's full name"
+                  value={newDoctor.name}
+                  onChange={handleDoctorInputChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="doctorSpecialty" className="form-label">Specialty</label>
+                <select 
+                  id="doctorSpecialty" 
+                  className="form-control"
+                  value={newDoctor.specialty}
+                  onChange={handleDoctorInputChange}
+                >
+                  <option value="">Select Specialty</option>
+                  <option value="general">General Medicine</option>
+                  <option value="cardiology">Cardiology</option>
+                  <option value="neurology">Neurology</option>
+                  <option value="orthopedics">Orthopedics</option>
+                  <option value="pediatrics">Pediatrics</option>
+                  <option value="gynecology">Gynecology</option>
+                  <option value="dermatology">Dermatology</option>
+                  <option value="ophthalmology">Ophthalmology</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="doctorLicense" className="form-label">License Number</label>
+                <input 
+                  type="text" 
+                  id="doctorLicense" 
+                  className="form-control" 
+                  placeholder="Enter license number"
+                  value={newDoctor.license}
+                  onChange={handleDoctorInputChange}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="doctorContact" className="form-label">Contact Number</label>
+                <input 
+                  type="text" 
+                  id="doctorContact" 
+                  className="form-control" 
+                  placeholder="Enter contact number"
+                  value={newDoctor.contact}
+                  onChange={handleDoctorInputChange}
+                />
+              </div>
+              
+              <button type="button" className="submit-btn" onClick={addDoctor}>Add Doctor</button>
             </div>
-            <div>
-              <FontAwesomeIcon icon={faMapMarkerAlt} /> 123 Health Street, Medical Center
-            </div>
-          </div>
-          
-          {/* Copyright Text */}
-          <div className="copyright">
-            ©️ 2025 AROGYAKOSH. All Rights Reserved.
           </div>
         </div>
-      </footer>
+      )}
     </div>
   );
 };

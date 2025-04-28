@@ -1,177 +1,334 @@
+/* viewDoc.css */
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #252525;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --accent-blue: #3a86ff;
+  --accent-green: #38b000;
+  --accent-red: #e63946;
+  --gradient-blue: linear-gradient(135deg, #38bdf8, #0284c7);
+  --gradient-green: linear-gradient(135deg, #4ade80, #16a34a);
+  --status-pending: #f59e0b;
+  --status-approved: #10b981;
+  --status-declined: #ef4444;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+}
 
 body {
-    background-color: #f3f4f6;
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  background: var(--gradient-blue);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  font-size: 2.5rem;
+  white-space: nowrap; /* Keep heading in one line */
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  width: 100%;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.tab:hover {
+  background-color: rgba(58, 134, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.tab-active {
+  background: var(--gradient-blue);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+/* Request Sections */
+.request-section {
+  margin-bottom: 2rem;
+  opacity: 1;
+  transition: var(--transition);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+  opacity: 0;
+}
+
+.message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.error-message {
+  text-align: center;
+  padding: 1rem;
+  color: var(--accent-red);
+  background-color: rgba(230, 57, 70, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--accent-red);
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Request List */
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.request-card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.request-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-blue);
+}
+
+.request-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+}
+
+.request-info {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.request-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.request-info p {
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Status Indicators */
+.status-pending, .status-approved, .status-declined {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.status-pending {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: var(--status-pending);
+}
+
+.status-approved {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--status-approved);
+}
+
+.status-declined {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--status-declined);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.action-buttons button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-approve {
+  background: var(--gradient-green);
+  color: white;
+}
+
+.btn-revoke {
+  background: var(--gradient-blue);
+  color: white;
+}
+
+.btn-decline {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--accent-red);
+  border: 1px solid var(--accent-red);
+}
+
+.btn-approve:hover, .btn-revoke:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-decline:hover {
+  background-color: rgba(230, 57, 70, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  animation: slideIn 0.3s ease-out forwards;
+  z-index: 1000;
+}
+
+.notification-success {
+  background: var(--gradient-green);
+  color: white;
+}
+
+.notification-error {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-  
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
   
   h1 {
-    font-size: 1.875rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 2rem;
+    font-size: 2rem;
   }
   
   .tabs {
-    display: flex;
-    border-bottom: 1px solid #e5e7eb;
-    margin-bottom: 1.5rem;
-  }
-  
-  .tab {
-    padding: 0.75rem 1.5rem;
-    font-weight: 500;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-  }
-  
-  .tab-active {
-    color: #4f46e5;
-    font-weight: 600;
-  }
-  
-  .tab-active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: #4f46e5;
-  }
-  
-  .request-section {
-    margin-bottom: 2rem;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  .message {
-    text-align: center;
-    color: #6b7280;
-  }
-  
-  .error-message {
-    text-align: center;
-    color: #ef4444;
-  }
-  
-  .request-list {
-    display: grid;
-    gap: 1rem;
-  }
-  
-  .request-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  
-  .request-info h3 {
-    font-weight: 600;
-    font-size: 1.125rem;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-  
-  .request-info p {
-    color: #4b5563;
-    font-size: 0.875rem;
-    margin: 0.25rem 0;
-  }
-  
-  .status-declined {
-    color: #dc2626;
-    font-weight: 500;
-  }
-  
-  .status-approved {
-    color: #16a34a;
-    font-weight: 500;
-  }
-  
-  .status-pending {
-    color: #ca8a04;
-    font-weight: 500;
-  }
-  
-  .action-buttons {
-    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
   
-  button {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    border: none;
-    color: white;
-  }
-  
-  .btn-approve {
-    background-color: #22c55e;
-  }
-  
-  .btn-approve:hover {
-    background-color: #16a34a;
-  }
-  
-  .btn-revoke {
-    background-color: #eab308;
-  }
-  
-  .btn-revoke:hover {
-    background-color: #ca8a04;
-  }
-  
-  .btn-decline {
-    background-color: #ef4444;
-  }
-  
-  .btn-decline:hover {
-    background-color: #dc2626;
-  }
-  
   .notification {
-    position: fixed;
-    bottom: 1rem;
+    left: 1rem;
     right: 1rem;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    color: white;
-    animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+    bottom: 1rem;
+    text-align: center;
   }
-  
-  .notification-success {
-    background-color: #22c55e;
-  }
-  
-  .notification-error {
-    background-color: #ef4444;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes fadeOut {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(20px); }
-  }
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--text-primary);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+/* Optional: Icons */
+.icon {
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+  vertical-align: middle;
+}

@@ -1,5 +1,5 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
+import { CheckCircle, XCircle, Clock, User, FileText, Hospital, AlertCircle } from 'lucide-react';
 import '../ui/viewDoc.css';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
   const [error, setError] = useState({ patient: null, hospital: null });
   const [notification, setNotification] = useState({ message: '', isError: false, visible: false });
 
-  const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8000';
+  const baseUrl = 'http://localhost:8000';
 
   // Helper function for making authenticated API requests
   const makeAuthRequest = async (url, method = 'GET', body = null) => {
@@ -53,7 +53,6 @@ function App() {
       const cookies = document.cookie.split(';');
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
         if (cookie.substring(0, name.length + 1) === (name + '=')) {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
@@ -159,6 +158,13 @@ function App() {
     }, 3000);
   };
 
+  // Helper function for status icon
+  const StatusIcon = ({ sanctioned, declined }) => {
+    if (declined) return <XCircle className="icon" color="#ef4444" />;
+    if (sanctioned) return <CheckCircle className="icon" color="#10b981" />;
+    return <Clock className="icon" color="#f59e0b" />;
+  };
+
   // Helper function for status text
   const getStatusText = (sanctioned, declined) => {
     if (declined) return 'Declined';
@@ -188,7 +194,6 @@ function App() {
   // Initialize the page
   useEffect(() => {
     fetchPatientRequests();
-    // Also fetch hospital requests initially
     fetchHospitalRequests();
   }, []);
 
@@ -215,20 +220,34 @@ function App() {
       {/* Patient Document Requests Section */}
       <div className={`request-section ${currentTab !== 'patientDoc' ? 'hidden' : ''}`}>
         {loading.patient ? (
-          <p className="message">Loading patient document requests...</p>
+          <div className="message">
+            <div className="loading-spinner"></div>
+            <p>Loading patient document requests...</p>
+          </div>
         ) : error.patient ? (
-          <p className="error-message">{error.patient}</p>
+          <div className="error-message">
+            <AlertCircle className="icon" />
+            <span>{error.patient}</span>
+          </div>
         ) : patientRequests.length === 0 ? (
-          <p className="message">No patient document requests found</p>
+          <div className="message">No patient document requests found</div>
         ) : (
           <div className="request-list">
             {patientRequests.map(req => (
               <div className="request-card" key={req.id}>
                 <div className="request-info">
-                  <h3>{req.doc.title || 'Document ' + req.doc.name}</h3>
-                  <p>Requested by: {req.to.username || 'User ' + req.to.username}</p>
-                  <p>Status: 
+                  <h3>
+                    <FileText className="icon" /> 
+                    {req.doc.title || 'Document ' + req.doc.name}
+                  </h3>
+                  <p>
+                    <User className="icon" /> 
+                    Requested by: {req.to.username || 'User ' + req.to.username}
+                  </p>
+                  <p>
+                    Status: 
                     <span className={getStatusClass(req.sanctioned, req.declined)}>
+                      <StatusIcon sanctioned={req.sanctioned} declined={req.declined} />
                       {getStatusText(req.sanctioned, req.declined)}
                     </span>
                   </p>
@@ -262,21 +281,38 @@ function App() {
       {/* Hospital Document Requests Section */}
       <div className={`request-section ${currentTab !== 'hospitalDoc' ? 'hidden' : ''}`}>
         {loading.hospital ? (
-          <p className="message">Loading hospital document requests...</p>
+          <div className="message">
+            <div className="loading-spinner"></div>
+            <p>Loading hospital document requests...</p>
+          </div>
         ) : error.hospital ? (
-          <p className="error-message">{error.hospital}</p>
+          <div className="error-message">
+            <AlertCircle className="icon" />
+            <span>{error.hospital}</span>
+          </div>
         ) : hospitalRequests.length === 0 ? (
-          <p className="message">No hospital document requests found</p>
+          <div className="message">No hospital document requests found</div>
         ) : (
           <div className="request-list">
             {hospitalRequests.map(req => (
               <div className="request-card" key={req.id}>
                 <div className="request-info">
-                  <h3>{req.doc.title || 'Document ' + req.doc.name}</h3>
-                  <p>Hospital: {req.doc.hospitalLedger?.hospital?.name || 'Unknown'}</p>
-                  <p>Requested by: {req.to.username}</p>
-                  <p>Status: 
+                  <h3>
+                    <FileText className="icon" /> 
+                    {req.doc.title || 'Document ' + req.doc.name}
+                  </h3>
+                  <p>
+                    <Hospital className="icon" /> 
+                    Hospital: {req.doc.hospitalLedger?.hospital?.name || 'Unknown'}
+                  </p>
+                  <p>
+                    <User className="icon" /> 
+                    Requested by: {req.to.username}
+                  </p>
+                  <p>
+                    Status: 
                     <span className={getStatusClass(req.sanctioned, req.declined)}>
+                      <StatusIcon sanctioned={req.sanctioned} declined={req.declined} />
                       {getStatusText(req.sanctioned, req.declined)}
                     </span>
                   </p>

@@ -105,13 +105,6 @@ const Arogyakosh = () => {
             <h3>Blockchain</h3>
             <p>Transparent and secure medical record management</p>
           </div>
-          <div className="tech-card">
-            <div className="tech-icon">
-              <i className="fas fa-atom"></i>
-            </div>
-            <h3>Quantum Computing</h3>
-            <p>Advanced computational power for complex medical research</p>
-          </div>
         </div>
       </section>
 

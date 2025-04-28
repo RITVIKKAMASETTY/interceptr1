@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../ui/ptDashboard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faFilePdf, faFileImage, faFileWord, faFileExcel, faFlask, 
+  faPrescription, faFileMedical, faFileInvoiceDollar, faSignature, 
+  faNotesMedical, faFileMedicalAlt, faEllipsisV, faEdit, faTrash, 
+  faLock, faUnlock, faUserMd, faSignOutAlt, faVolumeUp, 
+  faBars, faSearch, faPlus, faChevronLeft, faChevronRight
+} from '@fortawesome/free-solid-svg-icons';
 
 const PatientDashboard = () => {
   const { id } = useParams();
@@ -126,18 +134,18 @@ const PatientDashboard = () => {
   // Get document icon based on type
   const getDocumentIcon = (docType) => {
     const iconMap = {
-      'pdf': 'fa-file-pdf',
-      'image': 'fa-file-image',
-      'doc': 'fa-file-word',
-      'xls': 'fa-file-excel',
-      'lab': 'fa-flask',
-      'prescription': 'fa-prescription',
-      'report': 'fa-file-medical',
-      'insurance': 'fa-file-invoice-dollar',
-      'consent': 'fa-signature',
-      'history': 'fa-notes-medical'
+      'pdf': faFilePdf,
+      'image': faFileImage,
+      'doc': faFileWord,
+      'xls': faFileExcel,
+      'lab': faFlask,
+      'prescription': faPrescription,
+      'report': faFileMedical,
+      'insurance': faFileInvoiceDollar,
+      'consent': faSignature,
+      'history': faNotesMedical
     };
-    return iconMap[docType.toLowerCase()] || 'fa-file-medical-alt';
+    return iconMap[docType.toLowerCase()] || faFileMedicalAlt;
   };
 
   // Check patient authorization
@@ -614,65 +622,65 @@ const PatientDashboard = () => {
     }
   };
 
- // Google Translate initialization
-useEffect(() => {
-  // Check if script already exists
-  if (!document.querySelector('script[src*="translate_a/element.js"]')) {
-    // Define the callback function if it doesn't exist yet
-    if (!window.googleTranslateElementInit) {
-      window.googleTranslateElementInit = function() {
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,fr,de,ta,gu,kn',
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-          },
-          'google_translate_element'
-        );
-        
-        // Apply saved language preference
-        setTimeout(() => {
-          const savedLang = localStorage.getItem('preferredLanguage');
-          if (savedLang && document.querySelector('.goog-te-combo')) {
-            document.querySelector('.goog-te-combo').value = savedLang;
-            document.querySelector('.goog-te-combo').dispatchEvent(new Event('change'));
-          }
-        }, 1000);
-      };
+  // Google Translate initialization
+  useEffect(() => {
+    // Check if script already exists
+    if (!document.querySelector('script[src*="translate_a/element.js"]')) {
+      // Define the callback function if it doesn't exist yet
+      if (!window.googleTranslateElementInit) {
+        window.googleTranslateElementInit = function() {
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: 'en',
+              includedLanguages: 'en,hi,fr,de,ta,gu,kn',
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+            },
+            'google_translate_element'
+          );
+          
+          // Apply saved language preference
+          setTimeout(() => {
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && document.querySelector('.goog-te-combo')) {
+              document.querySelector('.goog-te-combo').value = savedLang;
+              document.querySelector('.goog-te-combo').dispatchEvent(new Event('change'));
+            }
+          }, 1000);
+        };
+      }
+
+      // Add Google Translate script
+      const script = document.createElement('script');
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.body.appendChild(script);
     }
 
-    // Add Google Translate script
-    const script = document.createElement('script');
-    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.body.appendChild(script);
-  }
+    // Save language preference when changed
+    const saveLangPreference = () => {
+      const handleComboChange = (comboEl) => {
+        if (comboEl) {
+          comboEl.addEventListener('change', function() {
+            const lang = this.value;
+            localStorage.setItem('preferredLanguage', lang);
+          });
+        }
+      };
 
-  // Save language preference when changed
-  const saveLangPreference = () => {
-    const handleComboChange = (comboEl) => {
+      // Initial check
+      const comboEl = document.querySelector('.goog-te-combo');
       if (comboEl) {
-        comboEl.addEventListener('change', function() {
-          const lang = this.value;
-          localStorage.setItem('preferredLanguage', lang);
-        });
+        handleComboChange(comboEl);
+      } else {
+        // If not available yet, try again after a delay
+        setTimeout(() => {
+          handleComboChange(document.querySelector('.goog-te-combo'));
+        }, 1000);
       }
     };
 
-    // Initial check
-    const comboEl = document.querySelector('.goog-te-combo');
-    if (comboEl) {
-      handleComboChange(comboEl);
-    } else {
-      // If not available yet, try again after a delay
-      setTimeout(() => {
-        handleComboChange(document.querySelector('.goog-te-combo'));
-      }, 1000);
-    }
-  };
-
-  saveLangPreference();
-}, []); // Empty dependency array so this runs only once
+    saveLangPreference();
+  }, []); // Empty dependency array so this runs only once
 
   // Document card component
   const DocumentCard = ({ doc }) => {
@@ -750,32 +758,32 @@ useEffect(() => {
       <div className="document-card" data-id={doc.id}>
         {isUserAuthorized && (
           <div className="document-menu">
-            <i className="fas fa-ellipsis-v menu-trigger"></i>
+            <FontAwesomeIcon icon={faEllipsisV} className="menu-trigger" />
             <div className="document-menu-options">
               <div 
                 className="menu-option edit-option" 
                 onClick={() => toggleVisibility(doc.id, doc.isHospital)}
               >
-                <i className="fas fa-edit"></i> {doc.isPrivate ? 'Make Public' : 'Make Private'}
+                <FontAwesomeIcon icon={faEdit} /> {doc.isPrivate ? 'Make Public' : 'Make Private'}
               </div>
               <div 
                 className="menu-option delete-option" 
                 onClick={() => confirmDelete(doc.id, doc.isHospital)}
               >
-                <i className="fas fa-trash"></i> Delete
+                <FontAwesomeIcon icon={faTrash} /> Delete
               </div>
             </div>
           </div>
         )}
         <div className="document-icon">
-          <i className={`fas ${doc.icon}`}></i>
+          <FontAwesomeIcon icon={doc.icon} />
         </div>
         <div className="document-title">{doc.title}</div>
         <div className="document-date">{doc.date}</div>
         <div className="document-visibility">
           {doc.isPrivate ? 
-            <><i className="fas fa-lock"></i> Private</> : 
-            <><i className="fas fa-unlock"></i> Public</>
+            <><FontAwesomeIcon icon={faLock} /> Private</> : 
+            <><FontAwesomeIcon icon={faUnlock} /> Public</>
           }
         </div>
         <div 
@@ -849,15 +857,19 @@ useEffect(() => {
         
         <div className="sidebar-menu">
           <div className="menu-item active" onClick={() => handleNavigation(`/route/patient/${id}`)}>
-            <i className="fas fa-file-medical"></i>
+            <FontAwesomeIcon icon={faFileMedical} />
             <span>Patient Dashboard</span>
           </div>
           <div className="menu-item" onClick={() => handleNavigation('/route/chat')}>
-            <i className="fas fa-user-md"></i>
+            <FontAwesomeIcon icon={faUserMd} />
             <span>Virtual Doctor</span>
           </div>
+          <div className="menu-item" onClick={() => handleNavigation('/route/access-document')}>
+            <FontAwesomeIcon icon={faUserMd} />
+            <span>Access Document</span>
+          </div>
           <div className="menu-item" onClick={handleLogout}>
-            <i className="fas fa-sign-out-alt"></i>
+            <FontAwesomeIcon icon={faSignOutAlt} />
             <span>Logout</span>
           </div>
         </div>
@@ -865,7 +877,7 @@ useEffect(() => {
         <div className="sidebar-footer">
           <div id="google_translate_element"></div>
           <button id="readAloudBtn" className="read-aloud-btn" onClick={toggleReadAloud}>
-            <i className="fas fa-volume-up"></i>
+            <FontAwesomeIcon icon={faVolumeUp} />
             {speaking ? ' Pause Reading' : ' Read Aloud'}
           </button>
         </div>
@@ -876,13 +888,16 @@ useEffect(() => {
         <div className="header">
           {!isSidebarOpen && (
             <button className="sidebar-toggle-mobile" onClick={toggleSidebar}>
-              <i className="fas fa-bars"></i>
+              <FontAwesomeIcon icon={faBars} />
             </button>
           )}
           <h1 className="page-title">Patient Documents</h1>
         </div>
         
-        <div className="content-card">
+        <div
+          className="content-card"
+          style={{ backgroundColor: '#080808' }}
+        >
           <h2 className="card-title">Patient Information</h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ marginRight: '20px', marginBottom: '10px' }}>
@@ -919,7 +934,10 @@ useEffect(() => {
           </div>
         </div>
         
-        <div className="content-card">
+        <div
+  className="content-card"
+  style={{ backgroundColor: '#080808' }}
+>
           <div className="search-upload-container">
             <div className="search-container">
               <i className="fas fa-search search-icon"></i>

@@ -1,0 +1,843 @@
+/* ptReg.css - Dark theme with blue/green gradients */
+
+:root {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2a2a2a;
+    --text-primary: #f0f0f0;
+    --text-secondary: #b0b0b0;
+    --border-color: #3a3a3a;
+    --primary-gradient: linear-gradient(135deg, #0b5563 0%, #1a936f 100%);
+    --secondary-gradient: linear-gradient(135deg, #134e5e 0%, #1a6b63 100%);
+    --highlight-color: #00c896;
+    --error-color: #ff5252;
+    --success-color: #00e676;
+    --submit-btn-gradient: linear-gradient(135deg, #0d47a1 0%, #00796b 100%);
+    --tooltip-bg: #323232;
+    --dropdown-bg: #2c2c2c;
+    --dropdown-hover: #3a3a3a;
+    --input-bg: #2a2a2a;
+    --input-focus-bg: #333333;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    z-index: 1;
+  }
+  
+  h1, h2 {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  h1::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--primary-gradient);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 3px;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+  }
+  
+  /* Form Styles */
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .hospital-info {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: var(--highlight-color);
+    background-color: var(--input-focus-bg);
+    box-shadow: 0 0 0 2px rgba(0, 200, 150, 0.2);
+  }
+  
+  .search-input-wrapper {
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+  }
+  
+  input#patient-search, input#doctor-search {
+    padding-left: 2.5rem;
+  }
+  
+  .form-group.focus {
+    transform: scale(1.005);
+  }
+  
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--submit-btn-gradient);
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  button:active {
+    transform: translateY(0);
+  }
+  
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  #submit-btn {
+    background: var(--submit-btn-gradient);
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 0.85rem;
+  }
+  
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    margin-left: 1rem;
+  }
+  
+  .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Dropdown Styles */
+  .dropdown-container {
+    position: relative;
+  }
+  
+  .dropdown-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .dropdown-results.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: var(--dropdown-hover);
+}
+
+.dropdown-item.error {
+  color: var(--error-color);
+  font-style: italic;
+}
+
+/* Tooltip Styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.5rem;
+  width: 16px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  line-height: 16px;
+  text-align: center;
+  cursor: help;
+}
+
+.tooltip::before {
+  content: "?";
+  color: var(--text-primary);
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: var(--tooltip-bg);
+  color: var(--text-primary);
+  text-align: center;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  z-index: 20;
+  width: 200px;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  transform: translateY(10px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  font-weight: normal;
+  font-size: 0.75rem;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--tooltip-bg) transparent transparent transparent;
+}
+
+/* Loading States */
+#loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  transition: opacity 0.5s ease;
+}
+
+.loader {
+  font-size: 2rem;
+  color: var(--highlight-color);
+  margin-bottom: 1rem;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Auth Container */
+.auth-container {
+  background-color: var(--bg-tertiary);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--secondary-gradient);
+  z-index: 1;
+}
+
+.auth-container button {
+  margin: 0.5rem;
+  min-width: 150px;
+}
+
+#become-hospital {
+  background: var(--secondary-gradient);
+}
+
+/* Patient Registration Form */
+#patient-registration-form {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#patient-registration-form.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Error/Success Messages */
+.error-message,
+.success-message {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.error-message.visible,
+.success-message.visible {
+  opacity: 1;
+  max-height: 100px;
+  margin-bottom: 0.5rem;
+}
+
+.error-message {
+  background-color: rgba(255, 82, 82, 0.1);
+  color: var(--error-color);
+  border-left: 3px solid var(--error-color);
+}
+
+.success-message {
+  background-color: rgba(0, 230, 118, 0.1);
+  color: var(--success-color);
+  border-left: 3px solid var(--success-color);
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: rgba(255, 82, 82, 0.1);
+  border-radius: 8px;
+  color: var(--error-color);
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Ripple Animation */
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+  100% {
+    width: 500px;
+    height: 500px;
+    opacity: 0;
+  }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--highlight-color);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .hospital-info {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+  
+  .auth-container {
+    padding: 1.5rem;
+  }
+  
+  button {
+    padding: 0.7rem 1.2rem;
+  }
+}
+
+/* Small screens */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  input, button {
+    font-size: 0.9rem;
+  }
+  
+  .tooltip-text {
+    width: 150px;
+    margin-left: -75px;
+  }
+}
+
+.dropdown-results.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+  
+  .dropdown-item:hover {
+    background-color: var(--dropdown-hover);
+  }
+  
+  .dropdown-item.error {
+    color: var(--error-color);
+    font-style: italic;
+  }
+  
+  /* Tooltip Styles */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: 0.5rem;
+    width: 16px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    line-height: 16px;
+    text-align: center;
+    cursor: help;
+  }
+  
+  .tooltip::before {
+    content: "?";
+    color: var(--text-primary);
+  }
+  
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    background-color: var(--tooltip-bg);
+    color: var(--text-primary);
+    text-align: center;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    position: absolute;
+    z-index: 20;
+    width: 200px;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    font-weight: normal;
+    font-size: 0.75rem;
+  }
+  
+  .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--tooltip-bg) transparent transparent transparent;
+  }
+  
+  /* Loading States */
+  #loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    transition: opacity 0.5s ease;
+  }
+  
+  .loader {
+    font-size: 2rem;
+    color: var(--highlight-color);
+    margin-bottom: 1rem;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  .fade-out {
+    animation: fadeOut 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+  }
+  
+  /* Auth Container */
+  .auth-container {
+    background-color: var(--bg-tertiary);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--secondary-gradient);
+    z-index: 1;
+  }
+  
+  .auth-container button {
+    margin: 0.5rem;
+    min-width: 150px;
+  }
+  
+  #become-hospital {
+    background: var(--secondary-gradient);
+  }
+  
+  /* Patient Registration Form */
+  #patient-registration-form {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  #patient-registration-form.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Error/Success Messages */
+  .error-message,
+  .success-message {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .error-message.visible,
+  .success-message.visible {
+    opacity: 1;
+    max-height: 100px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .error-message {
+    background-color: rgba(255, 82, 82, 0.1);
+    color: var(--error-color);
+    border-left: 3px solid var(--error-color);
+  }
+  
+  .success-message {
+    background-color: rgba(0, 230, 118, 0.1);
+    color: var(--success-color);
+    border-left: 3px solid var(--success-color);
+  }
+  
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background-color: rgba(255, 82, 82, 0.1);
+    border-radius: 8px;
+    color: var(--error-color);
+  }
+  
+  .error-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Ripple Animation */
+  @keyframes ripple {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.5;
+    }
+    100% {
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }
+  
+  /* Scrollbar Styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--highlight-color);
+  }
+  
+  /* Responsive Styles */
+  @media screen and (max-width: 768px) {
+    .container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .form-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .hospital-info {
+      margin-top: 1rem;
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+    }
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+    
+    .auth-container {
+      padding: 1.5rem;
+    }
+    
+    button {
+      padding: 0.7rem 1.2rem;
+    }
+  }
+  
+  /* Small screens */
+  @media screen and (max-width: 480px) {
+    .container {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+    
+    input, button {
+      font-size: 0.9rem;
+    }
+    
+    .tooltip-text {
+      width: 150px;
+      margin-left: -75px;
+    }
+  }
