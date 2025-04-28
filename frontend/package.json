@@ -14,6 +14,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/viewer": "^1.9.87",
     "aos": "^2.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
