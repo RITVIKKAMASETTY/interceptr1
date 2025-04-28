@@ -22,54 +22,54 @@ const Arogyakosh = () => {
   if (isLoading) {
     return (
       <div className="loading-screen">
-        <div className="pulse-loader">
+        <div className="heartbeat-loader">
           <i className="fas fa-heartbeat"></i>
         </div>
-        <h2>Loading Arogyakosh...</h2>
+        <h2 className="loading-text">Loading Arogyakosh...</h2>
       </div>
     );
   }
 
   return (
     <div className="arogyakosh-app">
-      {/* Healthcare animated background */}
-      <div className="animated-background">
-        <div className="medical-symbols">
-          <i className="fas fa-heartbeat"></i>
-          <i className="fas fa-prescription"></i>
-          <i className="fas fa-pills"></i>
-          <i className="fas fa-dna"></i>
-          <i className="fas fa-ambulance"></i>
-          <i className="fas fa-stethoscope"></i>
-          <i className="fas fa-capsules"></i>
-          <i className="fas fa-microscope"></i>
-          <i className="fas fa-hospital"></i>
-          <i className="fas fa-notes-medical"></i>
-        </div>
-        <div className="pulse-circles">
-          <div className="pulse-circle"></div>
-          <div className="pulse-circle"></div>
-          <div className="pulse-circle"></div>
-        </div>
-        <div className="healthline"></div>
+      {/* Animated background with particles */}
+      <div className="particle-background">
+        <div className="particles" id="particles-js"></div>
+        <div className="health-wave"></div>
       </div>
 
       {/* Hero Section */}
-      <section className="hero">
+      <section className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">Arogyakosh:</h1>
-          <h1 className="hero-subtitle">Transforming Healthcare</h1>
-          <p className="hero-text">Connecting Patients, Doctors, and Hospitals with Cutting-Edge Technology</p>
-          <button onClick={handleLogin} className="cta-button">
-            Login <i className="fas fa-arrow-right"></i>
+          <h1 className="hero-title">
+            <span className="gradient-text">Arogyakosh:</span>
+            <span className="hero-subtitle gradient-text">Transforming Healthcare</span>
+          </h1>
+          <p className="hero-description">Connecting Patients, Doctors, and Hospitals with Cutting-Edge Technology</p>
+          <button onClick={handleLogin} className="login-button">
+            <span>Login</span>
+            <i className="fas fa-arrow-right"></i>
           </button>
+        </div>
+        <div className="hero-graphic">
+          <div className="health-pulse">
+            <svg viewBox="0 0 600 200">
+              <path className="ecg-line" d="M0,100 L30,100 L45,50 L60,150 L75,100 L90,100 L105,100 L120,100 L150,20 L180,180 L210,100 L240,100 L300,100 L330,140 L360,60 L390,100 L420,100 L480,100 L510,70 L540,130 L570,100 L600,100" fill="none" stroke="url(#gradient)" strokeWidth="3"></path>
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#00ffcc" />
+                  <stop offset="100%" stopColor="#0066ff" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
       </section>
 
       {/* Tech Stack Section */}
-      <section className="tech-stack">
-        <h2>Our Technology Stack</h2>
-        <div className="tech-cards">
+      <section className="tech-section">
+        <h2 className="section-title gradient-text">Our Technology Stack</h2>
+        <div className="tech-grid">
           <div className="tech-card">
             <div className="tech-icon">
               <i className="fas fa-brain"></i>
@@ -112,19 +112,12 @@ const Arogyakosh = () => {
             <h3>Quantum Computing</h3>
             <p>Advanced computational power for complex medical research</p>
           </div>
-          <div className="tech-card">
-            <div className="tech-icon">
-              <i className="fas fa-microphone-alt"></i>
-            </div>
-            <h3>Speech Processing</h3>
-            <p>Advanced communication tools for healthcare professionals</p>
-          </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="features-section">
-        <h2>Healthcare Solutions</h2>
+        <h2 className="section-title gradient-text">Healthcare Solutions</h2>
         <div className="features-container">
           <div className="feature-item">
             <div className="feature-icon">
@@ -158,25 +151,27 @@ const Arogyakosh = () => {
       </section>
 
       {/* About Section */}
-      <section className="about-us">
+      <section className="about-section">
         <div className="about-content">
-          <h2>About Arogyakosh</h2>
-          <p>AROGYAKOSH provides comprehensive medical care with compassion and expertise. Our mission is to deliver high-quality healthcare tailored to individual patient needs. We believe in accessible healthcare for all and strive to innovate in providing medical services.</p>
+          <h2 className="section-title gradient-text">About Arogyakosh</h2>
+          <p className="about-description">
+            AROGYAKOSH provides comprehensive medical care with compassion and expertise. Our mission is to deliver high-quality healthcare tailored to individual patient needs. We believe in accessible healthcare for all and strive to innovate in providing medical services.
+          </p>
           
-          <div className="stats-container">
-            <div className="stat-item">
+          <div className="stats-grid">
+            <div className="stat-card">
               <div className="stat-number">10K+</div>
               <div className="stat-label">Patients</div>
             </div>
-            <div className="stat-item">
+            <div className="stat-card">
               <div className="stat-number">500+</div>
               <div className="stat-label">Doctors</div>
             </div>
-            <div className="stat-item">
+            <div className="stat-card">
               <div className="stat-number">100+</div>
               <div className="stat-label">Hospitals</div>
             </div>
-            <div className="stat-item">
+            <div className="stat-card">
               <div className="stat-number">24/7</div>
               <div className="stat-label">Support</div>
             </div>
@@ -195,7 +190,7 @@ const Arogyakosh = () => {
             <a href="#contact">Contact</a>
           </nav>
           
-          <div className="mission-statement">
+          <div className="footer-mission">
             <p>
               AROGYAKOSH provides comprehensive medical care with compassion and expertise.
               Our mission is to deliver high-quality healthcare tailored to individual patient needs.
@@ -203,7 +198,7 @@ const Arogyakosh = () => {
             </p>
           </div>
           
-          <div className="social-icons">
+          <div className="social-links">
             <a href="#"><i className="fab fa-facebook-f"></i></a>
             <a href="#"><i className="fab fa-twitter"></i></a>
             <a href="#"><i className="fab fa-google"></i></a>
@@ -212,14 +207,14 @@ const Arogyakosh = () => {
             <a href="#"><i className="fab fa-github"></i></a>
           </div>
           
-          <div className="contact-info">
-            <div>
+          <div className="contact-details">
+            <div className="contact-item">
               <i className="fas fa-phone-alt"></i> +919620146061
             </div>
-            <div>
+            <div className="contact-item">
               <i className="fas fa-envelope"></i> arogyakoshh@gmail.com
             </div>
-            <div>
+            <div className="contact-item">
               <i className="fas fa-map-marker-alt"></i> Mumbai
             </div>
           </div>

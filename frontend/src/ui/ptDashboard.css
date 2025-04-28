@@ -12,50 +12,14 @@
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Hamburger menu styles - improved */
-.hamburger-menu {
-  display: none;
-  cursor: pointer;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1001;
-  background-color: white;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-}
-
-.hamburger-menu span {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background-color: #00a0c6;
-  margin: 5px 0;
-  transition: 0.3s;
-  border-radius: 3px;
-}
-
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 999;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.3s;
-}
-
 /* Logo styling */
 .logo {
   display: flex;
   align-items: center;
   padding: 25px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 25px;
+  font-weight: bold;
 }
 
 .logo-icon {
