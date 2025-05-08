@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../ui/login.css'; // Update to the new CSS file
+import { initThreeBackground } from './background.jsx';
+
 
 // More explicit environment variable handling with fallback
 const API_BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8000';
@@ -61,6 +63,7 @@ function Login() {
   });
 
   useEffect(() => {
+    initThreeBackground()
     // Check if MetaMask is already connected
     if (typeof window.ethereum !== 'undefined') {
       window.ethereum.request({ method: 'eth_accounts' })
