@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../ui/index.css';
+import { initThreeBackground } from './background.jsx';
+
+
 
 const Arogyakosh = () => {
   const navigate = useNavigate();
@@ -8,6 +11,8 @@ const Arogyakosh = () => {
 
   useEffect(() => {
     // Simulate loading time for animations
+    initThreeBackground()
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);

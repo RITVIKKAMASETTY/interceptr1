@@ -1,14 +1,24 @@
-// background.js
 import * as THREE from 'three';
 
 let scene, camera, renderer, particles;
 
 export function initThreeBackground() {
+  // Prevent multiple canvases
+  const existingCanvas = document.querySelector('canvas');
+  if (existingCanvas) return;
+
+  // Initialize scene and camera
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
   camera.position.z = 5;
 
-  renderer = new THREE.WebGLRenderer({ alpha: true }); // alpha = transparent
+  // Initialize renderer with transparency
+  renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
   renderer.domElement.style.position = 'fixed';
@@ -16,10 +26,12 @@ export function initThreeBackground() {
   renderer.domElement.style.left = 0;
   renderer.domElement.style.zIndex = -1;
 
+  // Create particle geometry
   const geometry = new THREE.BufferGeometry();
   const vertices = [];
 
-  for (let i = 0; i < 500; i++) {
+  const PARTICLE_COUNT = 200;
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
     vertices.push(
       (Math.random() - 0.5) * 10,
       (Math.random() - 0.5) * 10,
@@ -31,8 +43,9 @@ export function initThreeBackground() {
 
   const material = new THREE.PointsMaterial({
     size: 0.05,
-    vertexColors: false,
-    color: new THREE.Color('#0EA5E9'), // Primary Blue
+    transparent: true,
+    opacity: 0.5,
+    color: new THREE.Color('#0EA5E9'),
   });
 
   particles = new THREE.Points(geometry, material);
@@ -43,8 +56,11 @@ export function initThreeBackground() {
 
 function animate() {
   requestAnimationFrame(animate);
-  particles.rotation.y += 0.001;
-  particles.rotation.x += 0.001;
-  renderer.render(scene, camera);
+  if (particles) {
+    particles.rotation.y += 0.001;
+    particles.rotation.x += 0.001;
+  }
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
+  }
 }
-//rtggrth

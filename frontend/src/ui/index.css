@@ -114,6 +114,7 @@ body {
   justify-content: space-between;
   padding: 0 8%;
   position: relative;
+
 }
 
 .hero-content {
@@ -128,6 +129,7 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  width: fit-content;
 }
 
 .hero-subtitle {
