@@ -52,6 +52,9 @@ body {
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px var(--shadow-color);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .login-content::before {
@@ -425,3 +428,9 @@ body {
     padding: 0.5rem;
   }
 }
+/* 
+@media (min-width: 1600px){
+  .login-content{
+    height: 80vh;
+  }
+} */
