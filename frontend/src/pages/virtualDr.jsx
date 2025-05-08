@@ -1,7 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../ui/virtualdr.css';
+import '../ui/virtualDr.css';
 import '@splinetool/viewer';
+import EmotionDetector from './EmotionDetector'; 
+// Import FontAwesome
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faBars, 
+  faPlus, 
+  faVideoSlash, 
+  faVideo, 
+  faUserMd, 
+  faCommentMedical, 
+  faExclamationCircle, 
+  faPaperPlane, 
+  faMicrophone, 
+  faMicrophoneSlash 
+} from '@fortawesome/free-solid-svg-icons';
 
+// Add all icons to the library
+library.add(
+  faBars, 
+  faPlus, 
+  faVideoSlash, 
+  faVideo, 
+  faUserMd, 
+  faCommentMedical, 
+  faExclamationCircle, 
+  faPaperPlane, 
+  faMicrophone, 
+  faMicrophoneSlash
+);
 
 const VirtualDoctor = () => {
   // State variables
@@ -424,7 +453,7 @@ const VirtualDoctor = () => {
     <div className="virtual-doctor-container">
       {/* Mobile toggle button */}
       <button className="mobile-toggle" onClick={toggleSidebar}>
-        <i className="fas fa-bars"></i>
+        <FontAwesomeIcon icon={faBars} />
       </button>
       
       {/* Overlay for mobile sidebar */}
@@ -439,7 +468,7 @@ const VirtualDoctor = () => {
           <div className="panel-header">
             <h2>Chat History</h2>
             <button className="new-chat-btn" onClick={createNewChat}>
-              <i className="fas fa-plus"></i> New Chat
+              <FontAwesomeIcon icon={faPlus} /> New Chat
             </button>
           </div>
           
@@ -500,8 +529,10 @@ const VirtualDoctor = () => {
                   <video ref={videoRef} autoPlay playsInline className="camera-feed"></video>
                 ) : (
                   <div className="camera-placeholder">
-                    <i className="fas fa-video-slash"></i>
-                    <span>Camera Off</span>
+                    {/* <FontAwesomeIcon icon={faVideoSlash} />
+                    <span>Camera Off</span> */}
+                    <EmotionDetector />
+                    
                   </div>
                 )}
               </div>
@@ -510,7 +541,7 @@ const VirtualDoctor = () => {
                 className={`camera-toggle-btn ${cameraActive ? 'active' : ''}`} 
                 onClick={toggleCamera}
               >
-                <i className={`fas ${cameraActive ? 'fa-video-slash' : 'fa-video'}`}></i>
+                <FontAwesomeIcon icon={cameraActive ? faVideoSlash : faVideo} />
                 {cameraActive ? 'Turn Off Camera' : 'Turn On Camera'}
               </button>
             </div>
@@ -521,7 +552,7 @@ const VirtualDoctor = () => {
         <div className="chat-panel">
           <div className="panel-header">
             <div className="doctor-avatar">
-              <i className="fas fa-user-md"></i>
+              <FontAwesomeIcon icon={faUserMd} />
             </div>
             <h2>Consultation</h2>
           </div>
@@ -534,7 +565,7 @@ const VirtualDoctor = () => {
               {!currentChatId ? (
                 <div className="welcome-screen">
                   <div className="welcome-icon">
-                    <i className="fas fa-comment-medical"></i>
+                    <FontAwesomeIcon icon={faCommentMedical} />
                   </div>
                   <h3>Welcome to Virtual Doctor</h3>
                   <p>Select a previous conversation or start a new chat to begin your consultation.</p>
@@ -546,7 +577,7 @@ const VirtualDoctor = () => {
                 </div>
               ) : error ? (
                 <div className="error-screen">
-                  <i className="fas fa-exclamation-circle"></i>
+                  <FontAwesomeIcon icon={faExclamationCircle} />
                   <p>{error}</p>
                 </div>
               ) : messages.length === 0 ? (
@@ -573,31 +604,82 @@ const VirtualDoctor = () => {
               )}
             </div>
             
-            <form onSubmit={handleSubmit} className="chat-input-form">
-              <input 
-                type="text" 
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Type your message here..."
-                disabled={!currentChatId || isLoading}
-                className="chat-input"
-              />
-              <button 
-                type="button"
-                onClick={toggleListening}
-                className={`mic-button ${isListening ? 'active' : ''}`}
-                disabled={!currentChatId || isLoading}
-              >
-                <i className={`fas ${isListening ? 'fa-microphone' : 'fa-microphone-slash'}`}></i>
-              </button>
-              <button 
-                type="submit" 
-                className="send-button"
-                disabled={!currentChatId || isLoading || !inputMessage.trim()}
-              >
-                <i className="fas fa-paper-plane"></i>
-              </button>
-            </form>
+            <form 
+  onSubmit={handleSubmit} 
+  style={{
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: "#f1f1f1",
+    borderRadius: "24px",
+    padding: "4px",
+    margin: "10px",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+  }}
+>
+  <input
+    type="text"
+    value={inputMessage}
+    onChange={(e) => setInputMessage(e.target.value)}
+    placeholder="Type your message here..."
+    disabled={!currentChatId || isLoading}
+    style={{
+      flex: "1",
+      border: "none",
+      padding: "10px 15px",
+      fontSize: "14px",
+      background: "transparent",
+      color: "black",
+      outline: "none"
+    }}
+  />
+  <div style={{
+    display: "flex",
+    gap: "8px",
+    marginRight: "5px"
+  }}>
+    <button
+      type="button"
+      onClick={toggleListening}
+      style={{
+        width: "36px",
+        height: "36px",
+        borderRadius: "50%",
+        border: "none",
+        backgroundColor: isListening ? "#ff4545" : "#0084ff",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        opacity: (!currentChatId || isLoading) ? "0.7" : "1"
+      }}
+      disabled={!currentChatId || isLoading}
+    >
+      <FontAwesomeIcon icon={isListening ? faMicrophone : faMicrophoneSlash} />
+    </button>
+    <button
+      type="submit"
+      style={{
+        width: "36px",
+        height: "36px",
+        borderRadius: "50%",
+        border: "none",
+        backgroundColor: "#0084ff",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: (!currentChatId || isLoading || !inputMessage.trim()) ? "not-allowed" : "pointer",
+        transition: "all 0.2s ease",
+        opacity: (!currentChatId || isLoading || !inputMessage.trim()) ? "0.7" : "1"
+      }}
+      disabled={!currentChatId || isLoading || !inputMessage.trim()}
+    >
+      <FontAwesomeIcon icon={faPaperPlane} />
+    </button>
+  </div>
+</form>
           </div>
         </div>
       </div>
